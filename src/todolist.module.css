@@ -1,0 +1,16 @@
+.error{
+    color: red;
+}
+
+.errorInput{
+    border: 1px solid red;
+}
+
+.active{
+    background: rgba(147, 152, 208, 0.75);
+}
+
+.taskCompleted{
+    opacity: 0.5;
+    text-decoration: line-through;
+}
