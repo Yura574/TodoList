@@ -6,48 +6,39 @@ import {v1} from "uuid";
 type TodolistType = {
     id: string,
     title: string
-    error: string
     filter: FilterType
 }
-type TasksTodo = {
+type TasksType = {
     [key: string]: TaskType[]
+}
+export type ErrorType = {
+    id: string,
+    error: string
+}
+export type ChangeTaskTitleType = {
+    todoId: string
+    taskId: string
+    isChange: boolean
 }
 
 function App() {
 
     const [todolists, setTodolists] = useState<TodolistType[]>([])
-    const [tasks, setTasks] = useState<TaskType[]>([
-        {id: v1(), isDone: true, title: 'HTML'},
-        {id: v1(), isDone: true, title: 'css'},
-        {id: v1(), isDone: false, title: 'ts'},
-        {id: v1(), isDone: true, title: 'ts'},
-        {id: v1(), isDone: false, title: 'ts'},
-    ])
-    const [tasksTodo, setTaskTodo] = useState<TasksTodo>({
-        'id': [{id: v1(), isDone: true, title: 'HTML'},
-            {id: v1(), isDone: false, title: 'ts'},]
-    })
-    const [error, setError] = useState('')
-
+    const [tasks, setTasks] = useState<TasksType>({})
     const [titleTodolist, setTitleTodolist] = useState('')
-    const deleteTask = (todoId: string, taskId: string) => {
-        // setTasks(tasks.filter(t => t.id !== taskId))
-        setTaskTodo({...tasksTodo, [`${todoId}`]: tasksTodo[todoId].filter(el => el.id !== taskId)})
-    }
-    const changeTaskStatus = (todoId: string, taskId: string, isDone: boolean) => {
-        const newTasks = tasksTodo[todoId]
-        setTaskTodo({...tasksTodo, [`${todoId}`]: tasksTodo[todoId].map(el => el.id === taskId ? {...el, isDone} : el)})
-    }
+    const [error, setError] = useState<ErrorType | null>(null)
+    const [isChangeTaskTitle, setIsChangeTaskTitle] = useState<ChangeTaskTitleType | null>(null)
+
+
     const addTodolist = (title: string) => {
         const id = v1()
         const todo: TodolistType = {
-            id, title, error: '', filter: "all"
+            id, title, filter: "all"
         }
         setTodolists([todo, ...todolists])
-        const newTasks: TasksTodo = {...tasksTodo, [`${id}`]: []}
-        setTaskTodo(newTasks)
+        const newTasks: TasksType = {...tasks, [`${id}`]: []}
+        setTasks(newTasks)
     }
-
     const changeFilter = (todoId: string, filter: FilterType) => {
         setTodolists(todolists.map(todo => todo.id === todoId ? {...todo, filter} : todo))
     }
@@ -55,32 +46,40 @@ function App() {
     const addTask = (todoId: string, title: string) => {
 
         const newTask: TaskType = {id: v1(), title, isDone: false}
-        // const [`${}`]
-        setTaskTodo({...tasksTodo, [`${todoId}`]: [newTask, ...tasksTodo[todoId]]})
-        // setTasks([...tasks, newTask])
-        // setTaskTodo({...tasksTodo })
+        setTasks({...tasks, [`${todoId}`]: [newTask, ...tasks[todoId]]})
+    }
+    const changeTaskStatus = (todoId: string, taskId: string, isDone: boolean) => {
+        setTasks({...tasks, [`${todoId}`]: tasks[todoId].map(el => el.id === taskId ? {...el, isDone} : el)})
+    }
+    const editTaskTitle = (todoId: string, taskId: string, title: string) => {
+        console.log('title', title)
+        setTasks({...tasks, [`${todoId}`]: tasks[todoId].map(t => t.id === taskId ? {...t, title} : t)})
+    }
+    const deleteTask = (todoId: string, taskId: string) => {
+        setTasks({...tasks, [`${todoId}`]: tasks[todoId].filter(el => el.id !== taskId)})
     }
 
-    const setErrorHandler = (error: string) => {
-        setError(error)
+
+    const setErrorHandler = (id: string, error: string) => {
+        setError({id, error})
+    }
+    const setChangeTaskTitle = (todoId: string, taskId: string, isChange: boolean,) => {
+        isChange ? setIsChangeTaskTitle({todoId, taskId, isChange}) : setIsChangeTaskTitle(null)
     }
 
-    // let taskForTodoList: TaskType[] = tasks
-    //
-    // if (filter === 'active') {
-    //     taskForTodoList = tasks.filter(t => !t.isDone)
-    // }
-    // if (filter === 'completed') {
-    //     taskForTodoList = tasks.filter(t => t.isDone)
-    // }
+
     const click = () => {
         if (error) {
-            setError('')
+            setError(null)
         }
+        // if (isChangeTaskTitle) {
+        //     setIsChangeTaskTitle(null)
+        // }
     }
-    // console.log(tasksTodo)
     return (
-        <div className="App" onClick={click}>
+        <div className="App"
+             onClick={click}
+        >
             <div>
                 <input value={titleTodolist}
                        onChange={e => setTitleTodolist(e.currentTarget.value)}
@@ -88,21 +87,19 @@ function App() {
                 <button onClick={() => addTodolist(titleTodolist)}>+</button>
             </div>
             {todolists.map(todo => {
-
-                    let taskForTodoList = tasksTodo[todo.id]
-
+                    let taskForTodoList = tasks[todo.id]
                     if (todo.filter === 'active') {
-                        taskForTodoList = tasksTodo[todo.id].filter(el => el.isDone)
+                        taskForTodoList = tasks[todo.id].filter(el => !el.isDone)
                     }
                     if (todo.filter === 'completed') {
-                        taskForTodoList = tasksTodo[todo.id].filter(el => !el.isDone)
+                        taskForTodoList = tasks[todo.id].filter(el => el.isDone)
                     }
                     return (
                         <div key={todo.id}>
                             <TodoList
                                 id={todo.id}
                                 title={todo.title}
-                                error={todo.error}
+                                error={error?.id === todo.id ? error.error : ''}
                                 filter={todo.filter}
                                 addTask={addTask}
                                 setErrorHandler={setErrorHandler}
@@ -110,6 +107,9 @@ function App() {
                                 deleteTask={deleteTask}
                                 setFilter={changeFilter}
                                 changeTaskStatus={changeTaskStatus}
+                                changeTaskTitle={isChangeTaskTitle?.todoId === todo.id ? isChangeTaskTitle : null}
+                                setChangeTaskTitle={setChangeTaskTitle}
+                                editTaskTitle={editTaskTitle}
                             />
                         </div>
                     )

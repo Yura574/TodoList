@@ -1,5 +1,6 @@
 import React, {ChangeEvent, KeyboardEvent, useState} from "react";
 import style from './todolist.module.css'
+import {ChangeTaskTitleType} from "./App";
 
 export type TaskType = {
     id: string
@@ -14,32 +15,50 @@ type TodoListType = {
     setFilter: (todoId: string, filter: FilterType) => void
     changeTaskStatus: (todoId: string, taskId: string, isDone: boolean) => void
     addTask: (todoId: string, title: string) => void
-    setErrorHandler: (error: string) => void
+    setErrorHandler: (todoId: string, error: string) => void
     error: string
     filter: FilterType
+    changeTaskTitle: ChangeTaskTitleType | null
+    setChangeTaskTitle: (todoId: string, taskId: string, isChange: boolean) => void
+    editTaskTitle: (todoId: string, taskId: string, title: string) => void
 }
 export type FilterType = 'all' | 'completed' | 'active'
 
 
 export function TodoList(props: TodoListType) {
     const [title, setTitle] = useState('')
+    const [editTitle, setEditTitle] = useState(title)
+
     const addTask = () => {
         if (title.trim() === '') {
-            props.setErrorHandler('title is required')
+            props.setErrorHandler(props.id, 'title is required')
         }
         title.trim() !== '' && props.addTask(props.id, title.trim())
         setTitle('')
     }
-
     const setTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (props.error) {
-            props.setErrorHandler('')
+            props.setErrorHandler(props.id, '')
         }
         setTitle(e.currentTarget.value)
     }
     const keyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.code === 'Enter') {
             addTask()
+        }
+    }
+    const onBlurHandler = (taskId: string, title: string) => {
+        props.editTaskTitle(props.id, taskId, title)
+        props.setChangeTaskTitle(props.id, taskId, false)
+    }
+    const changeTaskTitleHandler = (taskId: string, title: string) => {
+        setEditTitle(title)
+        props.setChangeTaskTitle(props.id, taskId, true)
+    }
+    const keyPressTaskTitleHandler = (taskId: string, title: string, e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.code === 'Enter') {
+            props.editTaskTitle(props.id, taskId, title)
+            props.setChangeTaskTitle(props.id, taskId, false)
         }
     }
     const onAllClickHandler = () => props.setFilter(props.id, 'all')
@@ -68,7 +87,18 @@ export function TodoList(props: TodoListType) {
                                 <input type="checkbox"
                                        checked={t.isDone}
                                        onChange={() => props.changeTaskStatus(props.id, t.id, !t.isDone)}/>
-                                <span>{t.title}</span>
+                                {props.changeTaskTitle && props.changeTaskTitle.taskId === t.id
+                                    ? <span>
+                                        <input
+                                            value={editTitle}
+                                            onChange={e => setEditTitle(e.currentTarget.value)}
+                                            autoFocus={true}
+                                            onBlur={() => onBlurHandler(t.id, editTitle)}
+                                            onKeyPress={e => keyPressTaskTitleHandler(t.id, editTitle, e)}
+                                        />
+                                </span>
+                                    : <span onDoubleClick={() => changeTaskTitleHandler(t.id, t.title)}>{t.title}</span>}
+
                                 <button onClick={deleteTaskHandler}>x</button>
                             </li>
                         )
