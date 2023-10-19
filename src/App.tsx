@@ -2,13 +2,14 @@ import React, {useState} from 'react';
 import './App.css';
 import {FilterType, TaskType, TodoList} from "./TodoList";
 import {v1} from "uuid";
+import {AddItemForm} from "./Components/AddItemForm";
 
-type TodolistType = {
+export type TodolistType = {
     id: string,
     title: string
     filter: FilterType
 }
-type TasksType = {
+export type         TasksType = {
     [key: string]: TaskType[]
 }
 export type ErrorType = {
@@ -25,9 +26,8 @@ function App() {
 
     const [todolists, setTodolists] = useState<TodolistType[]>([])
     const [tasks, setTasks] = useState<TasksType>({})
-    const [titleTodolist, setTitleTodolist] = useState('')
     const [error, setError] = useState<ErrorType | null>(null)
-    const [isChangeTaskTitle, setIsChangeTaskTitle] = useState<ChangeTaskTitleType | null>(null)
+    const [editTitleId, setEditTitleId ] = useState('')
 
 
     const addTodolist = (title: string) => {
@@ -42,6 +42,16 @@ function App() {
     const changeFilter = (todoId: string, filter: FilterType) => {
         setTodolists(todolists.map(todo => todo.id === todoId ? {...todo, filter} : todo))
     }
+    const deleteTodolist = (todoId: string) => {
+        setTodolists(todolists.filter(todo => todo.id !== todoId))
+        delete tasks[todoId]
+
+    }
+    const editTodolistTitle = (todoId: string, title: string) => {
+      setTodolists(todolists.map(todo=> todo.id === todoId ? {...todo, title} : todo))
+    }
+
+
 
     const addTask = (todoId: string, title: string) => {
 
@@ -52,7 +62,6 @@ function App() {
         setTasks({...tasks, [`${todoId}`]: tasks[todoId].map(el => el.id === taskId ? {...el, isDone} : el)})
     }
     const editTaskTitle = (todoId: string, taskId: string, title: string) => {
-        console.log('title', title)
         setTasks({...tasks, [`${todoId}`]: tasks[todoId].map(t => t.id === taskId ? {...t, title} : t)})
     }
     const deleteTask = (todoId: string, taskId: string) => {
@@ -63,29 +72,18 @@ function App() {
     const setErrorHandler = (id: string, error: string) => {
         setError({id, error})
     }
-    const setChangeTaskTitle = (todoId: string, taskId: string, isChange: boolean,) => {
-        isChange ? setIsChangeTaskTitle({todoId, taskId, isChange}) : setIsChangeTaskTitle(null)
-    }
-
 
     const click = () => {
         if (error) {
             setError(null)
         }
-        // if (isChangeTaskTitle) {
-        //     setIsChangeTaskTitle(null)
-        // }
     }
+    console.log(todolists.map(t => t.id))
     return (
         <div className="App"
              onClick={click}
         >
-            <div>
-                <input value={titleTodolist}
-                       onChange={e => setTitleTodolist(e.currentTarget.value)}
-                />
-                <button onClick={() => addTodolist(titleTodolist)}>+</button>
-            </div>
+            <AddItemForm  callback={addTodolist}/>
             {todolists.map(todo => {
                     let taskForTodoList = tasks[todo.id]
                     if (todo.filter === 'active') {
@@ -107,9 +105,13 @@ function App() {
                                 deleteTask={deleteTask}
                                 setFilter={changeFilter}
                                 changeTaskStatus={changeTaskStatus}
-                                changeTaskTitle={isChangeTaskTitle?.todoId === todo.id ? isChangeTaskTitle : null}
-                                setChangeTaskTitle={setChangeTaskTitle}
+                                editTodolistTitle={editTodolistTitle}
+                                editTitleId={editTitleId}
+                                setEditTitleId={setEditTitleId}
+                                // changeTaskTitle={isChangeTaskTitle?.todoId === todo.id ? isChangeTaskTitle : null}
+                                // setChangeTaskTitle={setChangeTaskTitle}
                                 editTaskTitle={editTaskTitle}
+                                deleteTodolist={deleteTodolist}
                             />
                         </div>
                     )

@@ -1,6 +1,7 @@
-import React, {ChangeEvent, KeyboardEvent, useState} from "react";
+import React, {useState} from "react";
 import style from './todolist.module.css'
-import {ChangeTaskTitleType} from "./App";
+import {AddItemForm} from "./Components/AddItemForm";
+import {ChangeTitle} from "./Components/ChangeTitle";
 
 export type TaskType = {
     id: string
@@ -18,89 +19,89 @@ type TodoListType = {
     setErrorHandler: (todoId: string, error: string) => void
     error: string
     filter: FilterType
-    changeTaskTitle: ChangeTaskTitleType | null
-    setChangeTaskTitle: (todoId: string, taskId: string, isChange: boolean) => void
     editTaskTitle: (todoId: string, taskId: string, title: string) => void
+    deleteTodolist: (todoId: string) => void
+    editTodolistTitle: (todoId: string, title: string) => void
+    editTitleId: string
+    setEditTitleId: (id: string)=> void
 }
 export type FilterType = 'all' | 'completed' | 'active'
 
-
+export type ChangeTitleType = {
+    id: string
+}
 export function TodoList(props: TodoListType) {
-    const [title, setTitle] = useState('')
-    const [editTitle, setEditTitle] = useState(title)
+    debugger
+    // const [title, setTitle] = useState(props.title ? props.title :'')
+    const [isChangeTitle, setIsChangeTitle] = useState('')
 
-    const addTask = () => {
-        if (title.trim() === '') {
-            props.setErrorHandler(props.id, 'title is required')
-        }
-        title.trim() !== '' && props.addTask(props.id, title.trim())
-        setTitle('')
+    const addTask = (title: string) => {
+        props.addTask(props.id, title.trim())
     }
-    const setTitleHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        if (props.error) {
-            props.setErrorHandler(props.id, '')
-        }
-        setTitle(e.currentTarget.value)
+
+    // const changeTodolistTitle = (title: string) => {
+    //     setTitle(title)
+    // }
+    const editTodolistTitleHandler = (title: string) => {
+        props.editTodolistTitle(props.id, title)
+        props.setEditTitleId('')
     }
-    const keyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.code === 'Enter') {
-            addTask()
-        }
+    console.log(isChangeTitle )
+    const cancelEditTitle = ()=>{
+        props.setEditTitleId('')
     }
-    const onBlurHandler = (taskId: string, title: string) => {
-        props.editTaskTitle(props.id, taskId, title)
-        props.setChangeTaskTitle(props.id, taskId, false)
-    }
-    const changeTaskTitleHandler = (taskId: string, title: string) => {
-        setEditTitle(title)
-        props.setChangeTaskTitle(props.id, taskId, true)
-    }
-    const keyPressTaskTitleHandler = (taskId: string, title: string, e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.code === 'Enter') {
-            props.editTaskTitle(props.id, taskId, title)
-            props.setChangeTaskTitle(props.id, taskId, false)
-        }
-    }
+
+
     const onAllClickHandler = () => props.setFilter(props.id, 'all')
     const onActiveClickHandler = () => props.setFilter(props.id, 'active')
     const onCompletedClickHandler = () => props.setFilter(props.id, 'completed')
 
     return (
         <div>
-            <h3>{props.title}</h3>
-            <div>
-                <input value={title}
-                       onChange={setTitleHandler}
-                       onKeyPress={keyPressHandler}
-                       className={props.error && style.errorInput}
-                />
-                <button onClick={addTask}>+</button>
-            </div>
+            {props.editTitleId === props.id
+                ? <h3>
+                    <ChangeTitle editTitleCallback={editTodolistTitleHandler}
+                                 title={props.title}
+                                 cancelEditTitle={cancelEditTitle}
+                    />
+                </h3>
+                : <h3 onDoubleClick={() => props.setEditTitleId(props.id)}>{props.title}
+                    <button onClick={() => props.deleteTodolist(props.id)}>x</button>
+                </h3>
+            }
+
+
+            <AddItemForm callback={addTask}/>
             {props.error && <div className={style.error}>{props.error}</div>}
             <ul>
                 {props.tasks.map(t => {
                         const deleteTaskHandler = () => {
                             props.deleteTask(props.id, t.id)
+
+                        }
+                        const editTaskTitle = (title: string) => {
+                            props.editTaskTitle(props.id, t.id, title)
+                            props.setEditTitleId('')
                         }
                         return (
-                            <li key={t.id} className={t.isDone ? style.taskCompleted : ''}>
-                                <input type="checkbox"
-                                       checked={t.isDone}
-                                       onChange={() => props.changeTaskStatus(props.id, t.id, !t.isDone)}/>
-                                {props.changeTaskTitle && props.changeTaskTitle.taskId === t.id
-                                    ? <span>
-                                        <input
-                                            value={editTitle}
-                                            onChange={e => setEditTitle(e.currentTarget.value)}
-                                            autoFocus={true}
-                                            onBlur={() => onBlurHandler(t.id, editTitle)}
-                                            onKeyPress={e => keyPressTaskTitleHandler(t.id, editTitle, e)}
-                                        />
-                                </span>
-                                    : <span onDoubleClick={() => changeTaskTitleHandler(t.id, t.title)}>{t.title}</span>}
+                            <div>{
+                                props.editTitleId === t.id
+                                    ? <ChangeTitle editTitleCallback={editTaskTitle}
+                                                   title={t.title}
+                                                   cancelEditTitle={cancelEditTitle}
+                                    />
+                                    : <li key={t.id} className={t.isDone ? style.taskCompleted : ''}>
+                                        <input type="checkbox"
+                                               checked={t.isDone}
+                                               onChange={() => props.changeTaskStatus(props.id, t.id, !t.isDone)}/>
 
-                                <button onClick={deleteTaskHandler}>x</button>
-                            </li>
+                                        <span onDoubleClick={() => props.setEditTitleId(t.id)}>{t.title}</span>
+
+                                        <button onClick={deleteTaskHandler}>x</button>
+                                    </li>
+                            }
+
+                            </div>
                         )
                     }
                 )}
