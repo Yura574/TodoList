@@ -1,0 +1,27 @@
+
+.wrapper {
+    border: 1px solid black;
+    /*min-height: 25px;*/
+    position: relative  ;
+    /*display: flex;*/
+    align-items: center;
+    display: inline-block;
+    box-sizing: border-box;
+
+}
+
+.title{
+    display: flex;
+    /*min-width: 70px;*/
+    font-size: 12px;
+    padding: 5px 20px 5px 5px;
+    box-sizing: border-box;
+}
+.arrow{
+    position: absolute;
+    width: 10px;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    padding-right: 5px;
+}
