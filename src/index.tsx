@@ -13,16 +13,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <Provider store={store}><App/></Provider>
-        <CustomSelect/>
-        <select style={{marginLeft: '30px', marginTop:'100px'}}>
-            <option>4</option>
-            <option>1</option>
-            <option>3</option>
-            <option>2dsdsdds</option>
-            <option>1</option>
-        </select>
-
-    </React.StrictMode>
+      </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

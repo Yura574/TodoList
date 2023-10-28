@@ -1,8 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import {FilterType, TaskType, TodoList} from "./TodoList";
 import {v1} from "uuid";
 import {AddItemForm} from "./Components/AddItemForm";
+import {todolistApi} from "./api/api";
+import {useDispatch} from "react-redux";
+import {getTodolistsThunk} from "./store/reducers/todolistReducer";
 
 export type TodolistType = {
     id: string,
@@ -23,12 +26,14 @@ export type ChangeTaskTitleType = {
 }
 
 function App() {
-
+const dispatch = useDispatch()
     const [todolists, setTodolists] = useState<TodolistType[]>([])
     const [tasks, setTasks] = useState<TasksType>({})
     const [error, setError] = useState<ErrorType | null>(null)
     const [editTitleId, setEditTitleId ] = useState('')
-
+useEffect(()=>{
+    dispatch(getTodolistsThunk())
+}, [])
 
     const addTodolist = (title: string) => {
         const id = v1()

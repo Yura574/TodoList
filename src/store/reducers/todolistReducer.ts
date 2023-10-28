@@ -2,6 +2,7 @@ import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {FilterType} from "../../TodoList";
 import {v1} from "uuid";
 import {TodolistType} from "../../App";
+import {todolistApi} from "../../api/api";
 
 type InitialStateType = {
     id: string,
@@ -11,10 +12,14 @@ type InitialStateType = {
 
 const initialState: InitialStateType[] = []
 
-const AddTodolist = createAsyncThunk('addTodo', async ()=>{
+export const getTodolistsThunk = createAsyncThunk('todolists',
+    async () => {
+       return todolistApi.getTodolists();
+    }
+)
+const AddTodolist = createAsyncThunk('addTodo', async () => {
 
     }
-
 )
 
 const todolistSlice = createSlice({
@@ -24,9 +29,14 @@ const todolistSlice = createSlice({
         addTodo: (state, action: PayloadAction<string>) => {
             const newTodo: TodolistType = {id: v1(), title: action.payload, filter: 'all'}
             state.push(newTodo)
-
         }
+
     },
+    extraReducers: (builder)=>{
+        builder.addCase(getTodolistsThunk.fulfilled, (state, action)=> {
+            console.log(action)
+        })
+    }
 
 })
 
