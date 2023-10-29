@@ -2,14 +2,12 @@ import React, {ChangeEvent, KeyboardEvent, MouseEvent, useState} from "react";
 import s from '../todolist.module.css'
 
 type AddItemFormType = {
-    title?: string
     callback: (title: string) => void
-    cancelEdit?: () => void
-    isChange?: boolean
 }
 
 export const AddItemForm = (props: AddItemFormType) => {
-    const [title, setTitle] = useState(props.title ? props.title : '')
+
+    const [title, setTitle] = useState( '')
     const [error, setError] = useState('')
 
     const callBackHandler = (e: MouseEvent<HTMLButtonElement>) => {
@@ -19,7 +17,6 @@ export const AddItemForm = (props: AddItemFormType) => {
         }
         title.trim() !== '' && props.callback(title.trim())
         setTitle('')
-        props.cancelEdit && props.cancelEdit()
     }
 
 
@@ -33,7 +30,6 @@ export const AddItemForm = (props: AddItemFormType) => {
     const keyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.code === 'Enter') {
             props.callback(title)
-            props.cancelEdit && props.cancelEdit()
             setTitle('')
         }
     }
@@ -42,20 +38,7 @@ export const AddItemForm = (props: AddItemFormType) => {
             setError('')
         }
     }
-    // const setChangeTaskTitle = (todoId: string, taskId: string, isChange: boolean,) => {
-    //     isChange ? setIsChangeTaskTitle({todoId, taskId, isChange}) : setIsChangeTaskTitle(null)
-    // }
-    // const onBlurHandler = (taskId: string, title: string) => {
-    //     props.editTaskTitle(props.id, taskId, title)
-    //     props.setChangeTaskTitle(props.id, taskId, false)
-    // }
-    //
-    // const keyPressTaskTitleHandler = (taskId: string, title: string, e: KeyboardEvent<HTMLInputElement>) => {
-    //     if (e.code === 'Enter') {
-    //         props.editTaskTitle(props.id, taskId, title)
-    //         props.setChangeTaskTitle(props.id, taskId, false)
-    //     }
-    // }
+
     return (
         <span>
             <input value={title}

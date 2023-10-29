@@ -1,13 +1,15 @@
 import React, {KeyboardEvent, useState} from "react";
 import s from '../todolist.module.css'
+import {setChangedTitleId} from "../store/reducers/commonReducer";
+import {useAppDispatch} from "../store/store";
 
 type ChangeTitleType = {
     title?: string
     editTitleCallback: (title: string) => void
-    cancelEditTitle: ()=>void
 }
 
 export const ChangeTitle = (props: ChangeTitleType) => {
+    const dispatch = useAppDispatch()
     const [title, setTitle] = useState(props.title ? props.title : '')
     const [error, setError] = useState('')
 
@@ -27,6 +29,9 @@ export const ChangeTitle = (props: ChangeTitleType) => {
             setError('title is required')
         }
     }
+    const cancelEditTitle = ()=> {
+        dispatch(setChangedTitleId(''))
+    }
     const changeTitle = (title: string) => {
         if (error) {
             setError('')
@@ -43,7 +48,7 @@ export const ChangeTitle = (props: ChangeTitleType) => {
                    className={error&& s.errorInput}
             />
             <button onClick={editTitle}>edit</button>
-            <button onClick={props.cancelEditTitle}>cancel</button>
+            <button onClick={cancelEditTitle}>cancel</button>
             {error && <div className={error&& s.error}>{error}</div>}
         </>
     )
