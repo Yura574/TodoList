@@ -1,13 +1,13 @@
-import React, {ChangeEvent, KeyboardEvent, MouseEvent, useState} from "react";
+import React, {ChangeEvent, KeyboardEvent, memo, MouseEvent, useMemo, useState} from "react";
 import s from '../todolist.module.css'
 
 type AddItemFormType = {
     callback: (title: string) => void
 }
 
-export const AddItemForm = (props: AddItemFormType) => {
+export const AddItemForm = memo( (props: AddItemFormType) => {
 
-    const [title, setTitle] = useState( '')
+    const [title, setTitle] = useState('')
     const [error, setError] = useState('')
 
     const callBackHandler = (e: MouseEvent<HTMLButtonElement>) => {
@@ -54,4 +54,5 @@ export const AddItemForm = (props: AddItemFormType) => {
             {error && <div className={s.error}>{error}</div>}
         </span>
     )
-}
+})
+

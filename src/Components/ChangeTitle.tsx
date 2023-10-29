@@ -1,4 +1,4 @@
-import React, {KeyboardEvent, useState} from "react";
+import React, {KeyboardEvent, memo, useState} from "react";
 import s from '../todolist.module.css'
 import {setChangedTitleId} from "../store/reducers/commonReducer";
 import {useAppDispatch} from "../store/store";
@@ -8,7 +8,8 @@ type ChangeTitleType = {
     editTitleCallback: (title: string) => void
 }
 
-export const ChangeTitle = (props: ChangeTitleType) => {
+export const ChangeTitle = memo((props: ChangeTitleType) => {
+    console.log('changeTitle is called')
     const dispatch = useAppDispatch()
     const [title, setTitle] = useState(props.title ? props.title : '')
     const [error, setError] = useState('')
@@ -52,4 +53,4 @@ export const ChangeTitle = (props: ChangeTitleType) => {
             {error && <div className={error&& s.error}>{error}</div>}
         </>
     )
-}
+})
