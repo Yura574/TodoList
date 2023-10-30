@@ -1,10 +1,9 @@
 import React, {useEffect} from 'react';
 import './App.css';
 import {TodoList} from "./Components/TodoList";
-import {v1} from "uuid";
 import {AddItemForm} from "./Components/AddItemForm";
 import {useSelector} from "react-redux";
-import {addTodoAC, addTodolistTC, getTodolistsThunk, TodolistType} from "./store/reducers/todolistReducer";
+import { addTodolistTC, getTodolistsThunk, } from "./store/reducers/todolistReducer";
 import {RootStateType, useAppDispatch} from "./store/store";
 
 
@@ -18,7 +17,6 @@ function App() {
     }, [])
 
     const addTodolist = (title: string) => {
-        // const todo: TodolistType = {id: v1(), title, filter: "all"}
         dispatch(addTodolistTC(title))
     }
 

@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {todolistApi} from "../../api/api";
+import {tasksApi, todolistApi} from "../../api/api";
+import {addAllTasks, addTaskAC} from './taskReducer';
 
 type InitialStateType = {
     todolists: TodolistType[]
@@ -20,18 +21,31 @@ const initialState: InitialStateType = {
 export const getTodolistsThunk = createAsyncThunk('getTodolists',
     async (title: string, thunkAPI) => {
         const dispatch = thunkAPI.dispatch
-        // console.log('tedo')
-       const res =await todolistApi.getTodolists().then(res => res.data)
-        console.log(res)
-        dispatch(setTodos(res))
+        console.log('tedo')
+       const todos = await todolistApi.getTodolists().then(res => {
+          const arr = res.data
+           const test = arr.map(async (el: TodolistType) => {
+             dispatch(addTodoAC(el))
+
+           })
+       })
+
     }
 )
 export const addTodolistTC = createAsyncThunk('addTodolist',
     async (title: string, thunkAPI) => {
-
-        return await todolistApi.addTodolist(title)
+const dispatch = thunkAPI.dispatch
+      const result =  await todolistApi.addTodolist(title).then(res=> {
+          dispatch(addTodoAC(res.data.data.item))
+      })
     })
-
+export const deleteTodolistTC = createAsyncThunk('deleteTodolist', async (todoId: string, thunkAPI)=>{
+    const dispatch = thunkAPI.dispatch
+    const result = await todolistApi.deleteTodolist(todoId).then(res =>{
+        console.log(res)
+        }
+    )
+})
 
 const todolistSlice = createSlice({
     name: 'todolistReducer',
@@ -39,7 +53,6 @@ const todolistSlice = createSlice({
     reducers: {
         setTodos: (state, action: PayloadAction<TodolistType[]>) => {
             console.log(action.payload)
-            console.log(state)
            state.todolists= action.payload
         },
         addTodoAC: (state, action: PayloadAction<TodolistType>) => {
@@ -63,7 +76,7 @@ const todolistSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(getTodolistsThunk.fulfilled, (state, action) => {
-            console.log(action.payload)
+            // console.log(action.payload)
         })
 
     }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import {addTaskDTO, TaskType} from '../store/reducers/taskReducer';
 
 
 const instance = axios.create({
@@ -11,9 +12,26 @@ const instance = axios.create({
 
 export const todolistApi = {
     getTodolists: () => {
-      return   instance.get('todo-lists')
+        return instance.get('todo-lists')
     },
-    addTodolist: (title: string)=>{
+    addTodolist: (title: string) => {
         return instance.post('todo-lists', {title})
+    },
+    deleteTodolist: (todoId:string)=> {
+        return instance.delete(`todo-lists/${todoId}`)
+    }
+}
+export const tasksApi = {
+    getTasks: (todoId: string) => {
+        return instance.get(`todo-lists/${todoId}/tasks`)
+    },
+    addTask: (task: addTaskDTO) => {
+        return instance.post(`todo-lists/${task.todoId}/tasks`, {title: task.title})
+    },
+    deleteTask: (todoId: string, taskId: string)=> {
+        return instance.delete(`todo-lists/${todoId}/tasks/${taskId}`)
+    },
+    changeTask: (todoId: string, taskId: string, task: TaskType)=> {
+        return instance.put('todo-lists/${todoId}/tasks/${taskId}', task)
     }
 }

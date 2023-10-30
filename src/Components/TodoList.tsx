@@ -4,10 +4,10 @@ import {AddItemForm} from "./AddItemForm";
 import {ChangeTitle} from "./ChangeTitle";
 import {useAppDispatch, useAppSelector} from "../store/store";
 import {setChangedTitleId, setError} from "../store/reducers/commonReducer";
-import {addTaskAC} from "../store/reducers/taskReducer";
+import {addTaskAC, addTaskTC} from "../store/reducers/taskReducer";
 import {
     changeFilterTodoAC,
-    deleteTodoAC,
+    deleteTodoAC, deleteTodolistTC,
     editTodolistTitleAC,
     FilterType,
     TodolistType
@@ -27,12 +27,11 @@ export const TodoList = memo((props: TodoListType) => {
     console.log('todolist is called')
     const dispatch = useAppDispatch()
 
-    // const tasks = useAppSelector(state => state.tasks[props.id])
     const editTitleId = useAppSelector(state => state.common.changedTitleId)
 
 
     const deleteTodolist = (todoId: string) => {
-        dispatch(deleteTodoAC(todoId))
+        dispatch(deleteTodolistTC(todoId))
     }
 
     const editTodolistTitle = (title: string) => {
@@ -44,7 +43,8 @@ export const TodoList = memo((props: TodoListType) => {
         if (!title.trim()) {
             dispatch(setError({id: props.id, error: 'title '}))
         } else {
-            dispatch(addTaskAC({todoId: props.id, taskTitle: title.trim()}))
+            // dispatch(addTaskAC({todoId: props.id, taskTitle: title.trim()}))
+            dispatch(addTaskTC({todoId: props.id, title: title.trim()}))
         }
     }
 
@@ -68,7 +68,7 @@ export const TodoList = memo((props: TodoListType) => {
 
 
             <AddItemForm callback={addTask}/>
-            {/*<Tasks todoId={props.id}  filter={props.filter}/>*/}
+            <Tasks todoId={props.id}  filter={props.filter}/>
             <div>
                 <button
                     className={props.filter === 'all' ? style.active : ''}
