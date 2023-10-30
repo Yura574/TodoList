@@ -13,7 +13,7 @@ function App() {
     const todos = useSelector((state: RootStateType) => state.todolist.todolists)
 
     useEffect(() => {
-        dispatch(getTodolistsThunk(''))
+        dispatch(getTodolistsThunk())
     }, [])
 
     const addTodolist = (title: string) => {
