@@ -7,3 +7,11 @@ test('renders learn react link', () => {
   const linkElement = getByText(/learn react/i);
   expect(linkElement).toBeInTheDocument();
 });
+export const testFanc = (a: number, b: number)=> {
+  return a+b
+}
+
+test('test', ()=> {
+  const endState = testFanc(5,3)
+  expect(endState).toBe(8)
+})

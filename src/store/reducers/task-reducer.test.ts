@@ -1,4 +1,5 @@
 import {v1} from 'uuid';
+import {addTaskTC} from "./taskReducer";
 export const a = 2
 
 const todolist1 = v1()
@@ -44,11 +45,8 @@ beforeEach(() => {
     }
 })
 
-test('test', () => {
-    // const newTodos: TodolistType[]= [
-    //     {id: v1(), title: 'new1', filter:'all'},
-    //     {id: v1(), title: 'new2', filter:'all'},
-    // ]
+test('add new task', () => {
+
     const newTask = {
         addedDate: "2023-10-30T18:57:24.317",
         deadline: null,
@@ -64,4 +62,6 @@ test('test', () => {
     // const endState = addTaskTC.fulfilled({task: newTask, startState[todolist1]}, '',  )
 // const   endState = getTodolistsThunk.fulfilled([], newTodos, )
 //     expect()
+
+    // const action = addTaskTC.fulfilled(todolist1, '', newTask, '', )
 })

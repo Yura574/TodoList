@@ -45,9 +45,7 @@ export const getTasksTC = createAsyncThunk('getTasks', async (todoId: string, th
 })
 
 export const addTaskTC = createAsyncThunk('addTask', async (task: addTaskDTO, thunkAPI) => {
-    const dispatch = thunkAPI.dispatch
    return  tasksApi.addTask(task).then(res => {
-
        return {todoId: task.todoId, task: res.data.data.item}
     })
 })
