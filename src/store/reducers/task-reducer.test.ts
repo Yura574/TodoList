@@ -1,10 +1,10 @@
 import {v1} from 'uuid';
-import {addTaskTC} from "./taskReducer";
+import {addTaskTC, deleteTaskTC, taskReducer, TasksType, TaskType} from "./taskReducer";
 export const a = 2
 
 const todolist1 = v1()
 const todolist2 = v1()
-let startState = {}
+let startState: TasksType = {}
 beforeEach(() => {
     startState = {
         [todolist1]: [{
@@ -46,8 +46,7 @@ beforeEach(() => {
 })
 
 test('add new task', () => {
-
-    const newTask = {
+    const newTask:TaskType = {
         addedDate: "2023-10-30T18:57:24.317",
         deadline: null,
         description: null,
@@ -57,11 +56,16 @@ test('add new task', () => {
         startDate: null,
         status: 0,
         title: "31",
-        todoListId: [todolist1]
+        todoListId: todolist1
     }
-    // const endState = addTaskTC.fulfilled({task: newTask, startState[todolist1]}, '',  )
-// const   endState = getTodolistsThunk.fulfilled([], newTodos, )
-//     expect()
+    const action = addTaskTC.fulfilled({task:newTask, todoId: newTask.todoListId}, '', {todoId: todolist1, title: '1212'} )
+    const endState = taskReducer(startState, action)
+    expect(endState[todolist1].length).toBe(2)
+})
 
-    // const action = addTaskTC.fulfilled(todolist1, '', newTask, '', )
+
+test('delele task', ()=> {
+    const action = deleteTaskTC.fulfilled({todoId: todolist1, taskId: startState[todolist1][0].id}, '', {todoId: todolist1, taskId: '12'})
+    const endState = taskReducer(startState, action)
+    expect(endState[todolist1].length).toBe(0)
 })

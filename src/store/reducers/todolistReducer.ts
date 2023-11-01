@@ -36,8 +36,8 @@ export const addTodolistTC = createAsyncThunk('addTodolist', async (title: strin
         return  res.data.data.item
     })
 })
-export const deleteTodolistTC = createAsyncThunk('deleteTodolist', async (todoId: string, thunkAPI) => {
-    return todolistApi.deleteTodolist(todoId).then(res => {
+export const deleteTodolistTC = createAsyncThunk('deleteTodolist', async (todoId: string) => {
+    return todolistApi.deleteTodolist(todoId).then(() => {
             return todoId
         }
     )
@@ -63,10 +63,6 @@ const todolistSlice = createSlice({
             const index = state.todolists.findIndex(el => el.id === action.payload.todoId)
             state.todolists[index].title = action.payload.title
         },
-        testFunc: (state, action) => {
-            ++state.test
-        }
-
     },
     extraReducers: (builder) => {
         builder.addCase(getTodolistsThunk.fulfilled, (state, action) => {
@@ -75,7 +71,7 @@ const todolistSlice = createSlice({
             })
         })
         builder.addCase(addTodolistTC.fulfilled, (state, action) => {
-            state.todolists.unshift(action.payload.result)
+            state.todolists.unshift(action.payload)
         })
         builder.addCase(deleteTodolistTC.fulfilled, (state, action) => {
             const index = state.todolists.findIndex(el => el.id === action.payload)
@@ -86,5 +82,5 @@ const todolistSlice = createSlice({
 
 })
 
-export const {addTodoAC, testFunc, changeFilterTodoAC, deleteTodoAC, editTodolistTitleAC} = todolistSlice.actions
+export const { changeFilterTodoAC, deleteTodoAC, editTodolistTitleAC} = todolistSlice.actions
 export const todolistReducer = todolistSlice.reducer

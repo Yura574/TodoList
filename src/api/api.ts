@@ -32,6 +32,9 @@ export const tasksApi = {
         return instance.delete(`todo-lists/${todoId}/tasks/${taskId}`)
     },
     changeTask: (todoId: string, taskId: string, task: TaskType)=> {
-        return instance.put('todo-lists/${todoId}/tasks/${taskId}', task)
+        console.log('123')
+        // console.log(task)
+
+        return instance.put(`todo-lists/${todoId}/tasks/${taskId}`, task)
     }
 }
