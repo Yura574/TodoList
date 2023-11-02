@@ -1,7 +1,7 @@
 import {setChangedTitleId} from "../store/reducers/commonReducer";
 import React, {memo, useEffect} from "react";
 import {useAppDispatch, useAppSelector} from "../store/store";
-import {changeTaskTC, deleteTaskTC, editTaskTitleAC, getTasksTC} from "../store/reducers/taskReducer";
+import {changeTaskDTO, changeTaskTC, deleteTaskTC,  getTasksTC} from "../store/reducers/taskReducer";
 import {ChangeTitle} from "./ChangeTitle";
 import style from "../todolist.module.css";
 
@@ -19,7 +19,8 @@ export const Tasks = memo((props: TaskType) => {
 
 
     const changeTaskStatus = (todoId: string, taskId: string, status: number) => {
-        dispatch(changeTaskTC({todoId, taskId, status}))
+        const changeData: changeTaskDTO<number> ={todoId, taskId, changedData: status}
+        dispatch(changeTaskTC(changeData))
     }
 
     let taskForTodoList = tasks
@@ -34,7 +35,7 @@ export const Tasks = memo((props: TaskType) => {
         <ul>
             {taskForTodoList.map(t => {
                 const editTaskTitle = (title: string) => {
-                    dispatch(editTaskTitleAC({todoId: t.id, taskId: t.id, title}))
+                    dispatch(changeTaskTC({todoId: props.todoId, taskId: t.id, changedData: title}))
                     dispatch(setChangedTitleId(''))
                 }
                 const deleteTask = () => {
@@ -50,23 +51,13 @@ export const Tasks = memo((props: TaskType) => {
                                    checked={t.status === 1}
                                    onChange={() => changeTaskStatus(props.todoId, t.id, t.status ===0 ? 1 : 0)}/>
 
-                            <span onDoubleClick={() => dispatch(setChangedTitleId(props.todoId))}>{t.title}</span>
+                                <span onDoubleClick={() => dispatch(setChangedTitleId(t.id))}>{t.title}</span>
 
-                            <button onClick={deleteTask}>x</button>
-                        </li>
-                    }
+                                <button onClick={deleteTask}>x</button>
+                            </li>
+                        }
 
-                    </div>)
-            })}
+                        </div>                    )                }            )}
         </ul>
-        // <div>
-        //     <input type="checkbox"
-        //            checked={props.isDone}
-        //            onChange={() => changeTaskStatus(props.todoId, props.taskId, !props.isDone)}/>
-        //
-        //     <span onDoubleClick={() => dispatch(setChangedTitleId(props.todoId))}>{props.title}</span>
-        //
-        //     <button onClick={deleteTask}>x</button>
-        // </div>
     )
 })

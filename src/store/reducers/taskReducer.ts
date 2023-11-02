@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {addTodolistTC, deleteTodoAC, getTodolistsThunk} from "./todolistReducer";
+import {addTodolistTC, deleteTodoAC, getTodolistsThunk, TodolistType} from "./todolistReducer";
 import {tasksApi} from '../../api/api';
 import {RootStateType} from "../store";
 
@@ -28,10 +28,11 @@ export type deleteTaskDTO = {
     todoId: string
     taskId: string
 }
-export type changeTaskDTO = {
+export type changeTaskDTO<T> = {
     todoId: string
     taskId: string
-    status: number
+    // status: number
+    changedData: T
 }
 
 const initialState: TasksType = {}
@@ -57,16 +58,20 @@ export const deleteTaskTC = createAsyncThunk('deleteTask', async (task: deleteTa
         }
     })
 })
-export const changeTaskTC = createAsyncThunk('changeTask', async (changedTask: changeTaskDTO, thunkAPI) => {
+export const changeTaskTC = createAsyncThunk('changeTask', async (changedTask: changeTaskDTO<number | string>, thunkAPI) => {
     const state: RootStateType = thunkAPI.getState() as RootStateType
-    const task = state.tasks[`${changedTask.todoId}`].find((el: any) => el.id === changedTask.taskId)
+    const task = state.tasks[`${changedTask.todoId}`].find((el: TodolistType) => el.id === changedTask.taskId)
     if(task) {
-        console.log(changedTask.status)
-        const newTask: TaskType  ={...task, status: changedTask.status}
+        let newTask: TaskType = task
+        if(typeof changedTask.changedData === 'number'){
+            newTask = {...task, status: changedTask.changedData}
+        }
+        if(typeof changedTask.changedData === 'string'){
+            newTask = {...task, title: changedTask.changedData}
+        }
 
         return  tasksApi.changeTask(changedTask.todoId, changedTask.taskId, newTask)
             .then(res => {
-                console.log(res)
                 return {todoId: changedTask.todoId, taskId: changedTask.taskId, task: res.data.data.item}
             })
     }
