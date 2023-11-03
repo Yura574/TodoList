@@ -92,3 +92,7 @@ test('delete todolist', ()=> {
     expect(endState.todolists.length).toBe(1)
 })
 
+test('change todolist title', ()=> {
+
+})
+

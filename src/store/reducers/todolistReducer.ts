@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {todolistApi} from "../../api/api";
+import {RootStateType} from "../store";
 
 type InitialStateType = {
     todolists: TodolistTypeWithFilter[],
@@ -42,6 +43,21 @@ export const deleteTodolistTC = createAsyncThunk('deleteTodolist', async (todoId
         }
     )
 })
+
+export const changeTodolistTC = createAsyncThunk('changeTodolist', async (param:{todoId:string, title: string}, {getState})=> {
+    const state = getState() as RootStateType
+    const changedTodo = state.todolist.todolists.find(el=> el.id === param.todoId) 
+    if(changedTodo){
+        const res =await todolistApi.changeTodolist(param.todoId, changedTodo)
+        try{
+            return res.data
+        }
+        catch (e) {
+            
+        }
+    }
+
+} ) 
 
 const todolistSlice = createSlice({
     name: 'todolistReducer',

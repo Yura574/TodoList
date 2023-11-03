@@ -78,13 +78,11 @@ test('delele task', () => {
 
 test('change task status', () => {
     const taskData = {todoId: todolist1, taskId: startState[todolist1][0].id, task: {...startState[todolist1][0]}}
-    console.log(taskData.task)
     const action = changeTaskTC.fulfilled({...taskData, task: {...task, status: 1}}, '', {
         todoId: task.todoListId,
         taskId: startState[todolist1][0].id,
         changedData: 1
     })
-    debugger
     const endState = taskReducer(startState, action)
 
     expect(startState[task.todoListId][0].status).toBe(0)
@@ -93,7 +91,6 @@ test('change task status', () => {
 
 
 test('change task title', () => {
-    debugger
     const taskData = {todoId: todolist1, taskId: startState[todolist1][0].id, task: startState[todolist1][0]}
     const action = changeTaskTC.fulfilled({...taskData, task: {...task, title: 'new Title'}}, '', {
         todoId: task.todoListId,

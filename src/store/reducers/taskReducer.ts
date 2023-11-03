@@ -31,7 +31,6 @@ export type deleteTaskDTO = {
 export type changeTaskDTO<T> = {
     todoId: string
     taskId: string
-    // status: number
     changedData: T
 }
 
@@ -124,6 +123,5 @@ const taskSlice = createSlice({
     }
 })
 
-export const { editTaskTitleAC} = taskSlice.actions
 
 export const taskReducer = taskSlice.reducer
