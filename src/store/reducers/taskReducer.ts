@@ -116,6 +116,7 @@ const taskSlice = createSlice({
         })
         builder.addCase(changeTaskTC.fulfilled, (state, action) => {
           if(action.payload){
+              console.log(action.payload)
               const index = state[action.payload.todoId].findIndex(el => el.id === action.payload!.taskId)
               state[action.payload.todoId].splice(index, 1 , action.payload.task)
           }

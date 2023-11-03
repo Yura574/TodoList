@@ -71,14 +71,15 @@ test('delele task', () => {
     const action = deleteTaskTC.fulfilled({
         todoId: todolist1,
         taskId: startState[todolist1][0].id
-    }, '', {todoId: todolist1, taskId:startState[todolist1][0].id})
+    }, '', {todoId: todolist1, taskId: startState[todolist1][0].id})
     const endState = taskReducer(startState, action)
     expect(endState[todolist1].length).toBe(0)
 })
 
 test('change task status', () => {
-    const taskData = {todoId: todolist1, taskId: startState[todolist1][0].id, task: startState[todolist1][0]}
-    const action = changeTaskTC.fulfilled(taskData, '', {
+    const taskData = {todoId: todolist1, taskId: startState[todolist1][0].id, task: {...startState[todolist1][0]}}
+    console.log(taskData.task)
+    const action = changeTaskTC.fulfilled({...taskData, task: {...task, status: 1}}, '', {
         todoId: task.todoListId,
         taskId: startState[todolist1][0].id,
         changedData: 1
@@ -92,14 +93,13 @@ test('change task status', () => {
 
 
 test('change task title', () => {
+    debugger
     const taskData = {todoId: todolist1, taskId: startState[todolist1][0].id, task: startState[todolist1][0]}
-    const action = changeTaskTC.fulfilled(taskData, '', {
+    const action = changeTaskTC.fulfilled({...taskData, task: {...task, title: 'new Title'}}, '', {
         todoId: task.todoListId,
         taskId: startState[todolist1][0].id,
         changedData: 'new Title'
     })
-    debugger
     const endState = taskReducer(startState, action)
-    console.log(endState)
     expect(endState[task.todoListId][0].title).toBe('new Title')
 })
