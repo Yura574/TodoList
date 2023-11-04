@@ -1,10 +1,8 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {todolistApi} from "../../api/api";
-import {RootStateType} from "../store";
 
 type InitialStateType = {
     todolists: TodolistTypeWithFilter[],
-    test: number
 }
 
 
@@ -21,8 +19,7 @@ export type TodolistTypeWithFilter = TodolistType & {
 export type FilterType = 'all' | 'completed' | 'active'
 
 const initialState: InitialStateType = {
-    todolists: [],
-    test: 1
+    todolists: []
 }
 
 export const getTodolistsThunk = createAsyncThunk('getTodolists', async () => {
@@ -34,7 +31,7 @@ export const getTodolistsThunk = createAsyncThunk('getTodolists', async () => {
 export const addTodolistTC = createAsyncThunk('addTodolist', async (title: string) => {
     return todolistApi.addTodolist(title).then(res => {
 
-        return  res.data.data.item
+        return res.data.data.item
     })
 })
 export const deleteTodolistTC = createAsyncThunk('deleteTodolist', async (todoId: string) => {
@@ -44,20 +41,26 @@ export const deleteTodolistTC = createAsyncThunk('deleteTodolist', async (todoId
     )
 })
 
-export const changeTodolistTC = createAsyncThunk('changeTodolist', async (param:{todoId:string, title: string}, {getState})=> {
-    const state = getState() as RootStateType
-    const changedTodo = state.todolist.todolists.find(el=> el.id === param.todoId) 
-    if(changedTodo){
-        const res =await todolistApi.changeTodolist(param.todoId, changedTodo)
-        try{
-            return res.data
+export const changeTodolistTC = createAsyncThunk('changeTodolist', async (param: { todoId: string, title: string }, {
+    getState,
+    rejectWithValue
+}) => {
+    // const state = getState() as RootStateType
+    // const changedTodo = state.todolist.todolists.find(el=> el.id === param.todoId)
+    // if(changedTodo){
+    const res = await todolistApi.changeTodolist(param.todoId, param.title)
+    try {
+        console.log(res.data)
+        if(res.data.resultCode === 0){
+            return {todoId: param.todoId, title: param.title}
         }
-        catch (e) {
-            
-        }
+        return rejectWithValue('error')
+    } catch (e) {
+        return rejectWithValue('error')
     }
+    // }
 
-} ) 
+})
 
 const todolistSlice = createSlice({
     name: 'todolistReducer',
@@ -93,10 +96,14 @@ const todolistSlice = createSlice({
             const index = state.todolists.findIndex(el => el.id === action.payload)
             state.todolists.splice(index, 1)
         })
+        builder.addCase(changeTodolistTC.fulfilled, (state, action) => {
+                const index = state.todolists.findIndex(el => el.id === action.payload.todoId)
+                state.todolists[index].title = action.payload.title
+        })
 
     }
 
 })
 
-export const { changeFilterTodoAC, deleteTodoAC, editTodolistTitleAC} = todolistSlice.actions
+export const {changeFilterTodoAC, deleteTodoAC, editTodolistTitleAC} = todolistSlice.actions
 export const todolistReducer = todolistSlice.reducer

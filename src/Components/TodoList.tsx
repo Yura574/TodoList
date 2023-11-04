@@ -6,8 +6,8 @@ import {useAppDispatch, useAppSelector} from "../store/store";
 import {setChangedTitleId, setError} from "../store/reducers/commonReducer";
 import { addTaskTC} from "../store/reducers/taskReducer";
 import {
-    changeFilterTodoAC,
-     deleteTodolistTC,
+    changeFilterTodoAC, changeTodolistTC,
+    deleteTodolistTC,
     editTodolistTitleAC,
     FilterType,
 } from "../store/reducers/todolistReducer";
@@ -33,7 +33,7 @@ export const TodoList = memo((props: TodoListType) => {
     }
 
     const editTodolistTitle = (title: string) => {
-        dispatch(editTodolistTitleAC({todoId: props.id, title}))
+        dispatch(changeTodolistTC({todoId: props.id, title}))
         dispatch(setChangedTitleId(''))
     }
 

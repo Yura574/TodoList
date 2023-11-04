@@ -1,5 +1,6 @@
 import {v1} from 'uuid';
 import {addTaskTC, changeTaskTC, deleteTaskTC, taskReducer, TasksType, TaskType} from "./taskReducer";
+import {addTodolistTC, TodolistType} from "./todolistReducer";
 
 const todolist1 = v1()
 const todolist2 = v1()
@@ -64,6 +65,14 @@ test('add new task', () => {
     })
     const endState = taskReducer(startState, action)
     expect(endState[todolist1].length).toBe(2)
+})
+test('add empty array, when add new todolist', ()=> {
+    const todo: TodolistType = {id: '123', title: 'new todo', order: 0, addedDate: ''}
+
+    const action = addTodolistTC.fulfilled(todo, '', 'new todo')
+    const endState = taskReducer(startState, action)
+    console.log(endState)
+    expect(endState[todo.id]).toBeDefined()
 })
 
 

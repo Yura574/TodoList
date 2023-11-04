@@ -3,10 +3,12 @@ import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import {todolistReducer} from "./reducers/todolistReducer";
 import {taskReducer} from "./reducers/taskReducer";
 import {commonReducer} from "./reducers/commonReducer";
+import {authReducer} from "./reducers/authReducer";
 
 const rootReducer = combineReducers({
     todolist: todolistReducer,
     tasks: taskReducer,
+    auth: authReducer,
     common: commonReducer,
 })
 export const store = configureStore({

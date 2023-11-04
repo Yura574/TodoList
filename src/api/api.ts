@@ -11,6 +11,11 @@ const instance = axios.create({
     }
 })
 
+export const authApi  =  {
+    authMe: ()=> {
+        return instance.get('auth/me')
+    }
+}
 export const todolistApi = {
     getTodolists: () => {
         return instance.get('todo-lists')
@@ -21,8 +26,8 @@ export const todolistApi = {
     deleteTodolist: (todoId:string)=> {
         return instance.delete(`todo-lists/${todoId}`)
     },
-    changeTodolist: (todoId: string, changedTodo: TodolistType)=> {
-        return instance.put('todo-lists/${todoId}', changedTodo)
+    changeTodolist: (todoId: string, title: string)=> {
+        return instance.put(`todo-lists/${todoId}`, {title})
     }
 }
 export const tasksApi = {
