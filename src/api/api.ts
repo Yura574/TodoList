@@ -1,6 +1,5 @@
 import axios from "axios";
 import {addTaskDTO, TaskType} from '../store/reducers/taskReducer';
-import {TodolistType} from "../store/reducers/todolistReducer";
 
 
 const instance = axios.create({
@@ -14,6 +13,10 @@ const instance = axios.create({
 export const authApi  =  {
     authMe: ()=> {
         return instance.get('auth/me')
+    },
+    login: (email: string, password:string, rememberMe?: boolean, captcha?: boolean)=> {
+        return instance.post('auth/login', {email, password})
+
     }
 }
 export const todolistApi = {

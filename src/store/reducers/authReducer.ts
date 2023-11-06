@@ -15,9 +15,20 @@ const initialState: initialStateType = {
     initialized: false,
     dataUser: null
 }
-const authTC =  createAsyncThunk('authMe', async (state, action)=> {
+export const authTC =  createAsyncThunk('authMe', async ()=> {
 const res = await authApi.authMe()
     console.log(res)
+})
+export const loginTC = createAsyncThunk('login', async (
+    param:{email: string, password: string, rememberMe: boolean, captcha: boolean
+    })=> {
+    const {email, password, rememberMe, captcha} = param
+    const res = await authApi.login(email, password, rememberMe, captcha)
+    try {
+        console.log(res.data)
+    }catch (err) {
+
+    }
 })
 
 const authSlice = createSlice({
