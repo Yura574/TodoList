@@ -7,21 +7,28 @@ import {addTodolistTC, getTodolistsThunk,} from "./store/reducers/todolistReduce
 import {RootStateType, useAppDispatch, useAppSelector} from "./store/store";
 import {Header} from "./Components/Header";
 import {redirect, Navigate} from "react-router-dom";
+import {authTC} from "./store/reducers/authReducer";
 
 
 function App() {
     const dispatch = useAppDispatch()
     const todos = useSelector((state: RootStateType) => state.todolist.todolists)
     const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
+    const initialized = useAppSelector(state => state.auth.initialized)
+// debugger
+    useEffect(()=> {
+        debugger
+        dispatch(authTC(''))
+    }, [])
 
     useEffect(() => {
       isLoggedIn &&  dispatch(getTodolistsThunk())
-    }, [])
+    }, [isLoggedIn])
 
     const addTodolist = (title: string) => {
         dispatch(addTodolistTC(title))
     }
-    if(!isLoggedIn){
+    if(!isLoggedIn && initialized){
       return <Navigate to={'login'}/>
     }
 

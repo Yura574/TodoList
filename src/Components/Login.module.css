@@ -4,12 +4,17 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+
+}
+.loginFormWrapper div{
+    margin-bottom: 20px;
 }
 
 .loginForm{
     display: flex;
     flex-direction: column;
+    /*gap: 30px;*/
 }
-.test{
-    background: red;
+.checkboxWrapper{
+    display: flex;
 }

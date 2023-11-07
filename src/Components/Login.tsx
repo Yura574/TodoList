@@ -1,8 +1,11 @@
-import {Form, useFormik} from "formik";
-import {useAppDispatch} from "../store/store";
-import SuperInputText from "./CommonComponents/c1-SuperInputText/SuperInputText";
-import SuperCheckbox from "./CommonComponents/c3-SuperCheckbox/SuperCheckbox";
+import {Field, Form, Formik} from "formik";
 import s from './Login.module.css'
+import SuperInputText from "./CommonComponents/c1-SuperInputText/SuperInputText";
+import SuperButton from "./CommonComponents/c2-SuperButton/SuperButton";
+import SuperCheckbox from "./CommonComponents/c3-SuperCheckbox/SuperCheckbox";
+import {useAppDispatch, useAppSelector} from "../store/store";
+import {loginTC} from "../store/reducers/authReducer";
+import {Navigate} from 'react-router-dom'
 
 interface Values {
     firstName: string;
@@ -11,54 +14,71 @@ interface Values {
 }
 
 export const Login = () => {
-    const dispatch = useAppDispatch()
-
-    const formik = useFormik({
-        initialValues: {
-            email: '',
-            password: '',
-            rememberMe: false
-        },
-        onSubmit: values => {
-            alert(JSON.stringify(values, null, 2));
-        },
-    });
-
+const dispatch = useAppDispatch()
+    const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
+    if(isLoggedIn){
+      return  <Navigate to={'/'} />
+    }   
     return (
         <div className={s.loginFormWrapper}>
-            <form onSubmit={formik.handleSubmit} className={s.loginForm}>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <SuperInputText
-                        name="email"
-                        type="email"
-                        onChange={formik.handleChange}
-                        value={formik.values.email}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <SuperInputText
-                        name="password"
-                        type="password"
-                        onChange={formik.handleChange}
-                        value={formik.values.password}
-                    />
-                </div>
-                <div>
-                    <label htmlFor="checed">Remember me</label>
-                    <input
-                        name="checked"
-                        type="checkbox"
-                        // onChange={formik.handleChange}
-                        checked={formik.values.rememberMe}
-                        // onCh
-                    />
+            <Formik
+                initialValues={{
+                    email: '',
+                    password: '',
+                    rememberMe: false,
+                    captcha: false
+                }}
+                onSubmit={(values) => {
+                    console.log(values)
+                    dispatch(loginTC(values))
+                }}>
+                {({values, handleChange}) => (
+                    <Form className={s.loginForm}>
+                        <label htmlFor="email">First Name</label>
+                        <Field name="email" placeholder="email">
+                            {() => (
+                                <SuperInputText
+                                    name={'email'}
+                                    value={values.email}
+                                    onChange={handleChange}
+                                    type="text"
+                                    placeholder="Email"
+                                />
+                            )}
+                        </Field>
 
-                </div>
+                        <label htmlFor={'password'}> Password</label>
+                        <Field name={'password'} placeholder={'password'}>
+                            {()=> (
+                                <SuperInputText
+                                    name={'password'}
+                                    type={'password'}
+                                    value={values.password}
+                                    onChange={handleChange}
+                                />
+                            )}
+                        </Field>
+                        <div className={s.checkboxWrapper}>
+                        <label htmlFor={'rememberMe'}>Remember me</label>
+                        <Field name={'rememberMe'} type={'checkbox'}>
+                            {() => (
+                                <SuperCheckbox
+                                    name={'rememberMe'}
+                                    checked={values.rememberMe}
+                                    onChange={handleChange}
+                                />
+                            )
 
-                <button type="submit">Submit</button>
-            </form>
+                            }
+                        </Field></div>
+
+                        <SuperButton type={'submit'}>submit</SuperButton>
+                    </Form>
+                )}
+
+
+            </Formik>
         </div>
     )
+
 }

@@ -17,6 +17,9 @@ export const authApi  =  {
     login: (email: string, password:string, rememberMe?: boolean, captcha?: boolean)=> {
         return instance.post('auth/login', {email, password})
 
+    },
+    logout: ()=>{
+        return instance.delete('auth/login')
     }
 }
 export const todolistApi = {
