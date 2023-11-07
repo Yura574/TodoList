@@ -6,6 +6,7 @@ import {useSelector} from "react-redux";
 import {addTodolistTC, getTodolistsThunk,} from "./store/reducers/todolistReducer";
 import {RootStateType, useAppDispatch, useAppSelector} from "./store/store";
 import {Header} from "./Components/Header";
+import {redirect, Navigate} from "react-router-dom";
 
 
 function App() {
@@ -19,6 +20,9 @@ function App() {
 
     const addTodolist = (title: string) => {
         dispatch(addTodolistTC(title))
+    }
+    if(!isLoggedIn){
+      return <Navigate to={'login'}/>
     }
 
     return (

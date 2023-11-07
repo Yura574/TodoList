@@ -1,72 +1,64 @@
-import {Field, Form, Formik} from "formik";
+import {Form, useFormik} from "formik";
 import {useAppDispatch} from "../store/store";
-import {loginTC} from "../store/reducers/authReducer";
+import SuperInputText from "./CommonComponents/c1-SuperInputText/SuperInputText";
+import SuperCheckbox from "./CommonComponents/c3-SuperCheckbox/SuperCheckbox";
+import s from './Login.module.css'
+
+interface Values {
+    firstName: string;
+    lastName: string;
+    email: string;
+}
 
 export const Login = () => {
     const dispatch = useAppDispatch()
-    const submit = () => {
 
-    }
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: '',
+            rememberMe: false
+        },
+        onSubmit: values => {
+            alert(JSON.stringify(values, null, 2));
+        },
+    });
+
     return (
-        <div>
-            <Formik
-                initialValues={{
-                    email: '',
-                    password: '',
-                    rememberMe: false,
-                    captcha: false,
-                }}
-                onSubmit={(values, {setSubmitting}) => {
-                    dispatch(loginTC(values))
-                }}
-                validate={values => {
-                    const errors: any = {}
-                    if (!values.email) {
-                        if (!values.email) {
-                            errors.email = 'Email required';
-                        } else if (
-                            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-                        ) {
-                            errors.email = 'Invalid email address';
-                        }
-                        return errors;
-                    }
-                    if (!values.password) {
-                        errors.password = 'Password required'
-                    } else if (values.password.length < 8) {
-                        errors.password = 'Password should be more 8 symbols'
-                    }
-                    return errors
-                }
-                }
-            >
-                {({
-                      values,
-                      errors,
-                      touched,
-                      handleBlur,
-                      handleChange,
-                      handleSubmit
-                  }) => (
-                    <Form onSubmit={handleSubmit}>
-                        <input
-                            name={'email'}
-                            value={values.email}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                        />
-                        {errors.email && touched.email ? <div>{errors.email}</div> : ''}
-                        <input
-                            name={'password'}
-                            value={values.password}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                        />
-                        {errors.password && touched.password ? <div>{errors.password}</div> : ''}
-                        <Field type={'checkbox'} name={'rememberMe'}/>
-                    </Form>
-                )}
-            </Formik>
+        <div className={s.loginFormWrapper}>
+            <form onSubmit={formik.handleSubmit} className={s.loginForm}>
+                <div>
+                    <label htmlFor="email">Email</label>
+                    <SuperInputText
+                        name="email"
+                        type="email"
+                        onChange={formik.handleChange}
+                        value={formik.values.email}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="password">Password</label>
+                    <SuperInputText
+                        name="password"
+                        type="password"
+                        onChange={formik.handleChange}
+                        value={formik.values.password}
+                    />
+                </div>
+                <div>
+                    <label htmlFor="checed">Remember me</label>
+                    <input
+                        name="checked"
+                        type="checkbox"
+                        // onChange={formik.handleChange}
+                        checked={formik.values.rememberMe}
+                        // onCh
+                    />
+
+                </div>
+
+                <button type="submit">Submit</button>
+            </form>
         </div>
     )
 }
